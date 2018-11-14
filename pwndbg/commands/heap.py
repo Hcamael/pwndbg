@@ -10,6 +10,7 @@ import struct
 
 import gdb
 import six
+import json
 
 import pwndbg.color.context as C
 import pwndbg.color.memory as M
@@ -238,7 +239,19 @@ def malloc_chunk(addr,fake=False):
         header += message.hint(' IS_MMAPED')
     if non_main_arena:
         header += message.hint(' NON_MAIN_ARENA')
-    print(header, chunk["value"])
+    input_data = {
+	"mchunk_prev_size": "", 
+	"mchunk_size":"",
+	"fd": "",
+	"bk": "",
+	"fd_nextsize": "",
+	"bk_nextsize": ""
+    }
+    for k in input_data:
+        v = str(chunk["value"][k])
+        input_data[k] = v
+    input_data["mchunk_size"] = hex(int(input_data["mchunk_size"]))
+    print(header, json.dumps(input_data, indent=4))
 
     return chunk
 
